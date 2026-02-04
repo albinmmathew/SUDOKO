@@ -1,0 +1,317 @@
+:root {
+    --bg-color: #0f172a;
+    --surface-color: #1e293b;
+    --surface-hover: #334155;
+    --primary-color: #38bdf8;
+    /* Sky Blue */
+    --primary-hover: #0ea5e9;
+    --accent-color: #818cf8;
+    /* Indigo */
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --grid-border: #475569;
+    --grid-border-thick: #94a3b8;
+    --success-color: #4ade80;
+    --error-color: #f87171;
+    --cell-bg: #1e293b;
+    --cell-input-bg: #0f172a;
+    --cell-selected: #1e3a8a;
+    /* Dark Blue selection */
+    --cell-highlight: #1e293b;
+    /* Same number highlight */
+
+    --transition-speed: 0.2s;
+    --radius-lg: 16px;
+    --radius-md: 8px;
+    --radius-sm: 4px;
+    --font-family: 'Outfit', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 24px;
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.logo .highlight {
+    color: var(--primary-color);
+}
+
+.stats-bar {
+    display: flex;
+    gap: 16px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value {
+    font-size: 1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Game Board */
+.game-board-wrapper {
+    width: 100%;
+    aspect-ratio: 1;
+    background: var(--surface-color);
+    padding: 4px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+}
+
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--grid-border-thick);
+    background-color: var(--grid-border);
+    gap: 1px;
+    border-radius: calc(var(--radius-lg) - 4px);
+    overflow: hidden;
+}
+
+.cell {
+    background-color: var(--cell-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.1s;
+    color: var(--text-main);
+    position: relative;
+}
+
+.cell.given {
+    background-color: var(--surface-hover);
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.cell.selected {
+    background-color: var(--cell-selected) !important;
+    animation: pulse-select 0.3s ease-out;
+}
+
+.cell.error {
+    background-color: rgba(248, 113, 113, 0.2) !important;
+    color: var(--error-color);
+}
+
+.cell.highlighted {
+    background-color: var(--surface-hover);
+}
+
+/* Thick Borders for 3x3 Logic */
+.cell:nth-child(3n) {
+    border-right: 2px solid var(--grid-border-thick);
+}
+
+.cell:nth-child(9n) {
+    border-right: none;
+}
+
+/* We need to handle bottom borders differently. 
+Since it's a grid, we can target ranges using nth-child 
+or simply rely on visual gaps. 
+Let's use a simpler approach: Grid Gap is managing the thin lines. 
+We need thicker lines every 3 rows.
+However, in a Gap-based grid, thicker lines are tricky without wrapper divs.
+Alternative: pseudo-elements or specific classes. */
+
+.t-border-bottom {
+    border-bottom: 2px solid var(--grid-border-thick);
+}
+
+.r-border-right {
+    border-right: 2px solid var(--grid-border-thick);
+}
+
+/* Numpad */
+.numpad {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.num-btn {
+    background-color: var(--surface-color);
+    border: none;
+    color: var(--text-main);
+    padding: 12px 0;
+    border-radius: var(--radius-md);
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.num-btn:hover {
+    background-color: var(--surface-hover);
+    transform: translateY(-2px);
+}
+
+.num-btn:active {
+    transform: translateY(0);
+}
+
+.num-btn.action {
+    color: var(--error-color);
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity var(--transition-speed);
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+    color: #0f172a;
+}
+
+.btn.secondary {
+    background-color: var(--surface-color);
+    color: var(--text-main);
+}
+
+.btn.danger {
+    background-color: rgba(248, 113, 113, 0.1);
+    color: var(--error-color);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background-color: var(--surface-color);
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.5);
+    max-width: 90%;
+    width: 350px;
+}
+
+.modal-content h2 {
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    font-size: 2rem;
+}
+
+.modal-content p {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+/* Animations */
+@keyframes pulse-select {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.95);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Media Queries */
+@media (max-width: 400px) {
+    .cell {
+        font-size: 1.2rem;
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+}
