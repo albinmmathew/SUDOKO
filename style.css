@@ -148,7 +148,15 @@ header {
 }
 
 .cell.highlighted {
-    background-color: var(--surface-hover);
+    background-color: #273549;
+    /* Slightly lighter than base, for row/col/box */
+}
+
+.cell.same-number {
+    background-color: #1a425e;
+    /* Distinct blueish tint for same numbers */
+    color: var(--primary-color);
+    font-weight: 700;
 }
 
 /* Thick Borders for 3x3 Logic */
