@@ -108,17 +108,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updateHighlights(index) {
+        const cells = document.querySelectorAll('.cell');
+
+        // Clear previous highlights
+        cells.forEach(c => {
+            c.classList.remove('highlighted', 'same-number');
+        });
+
+        if (index === -1) return;
+
+        const row = Math.floor(index / 9);
+        const col = index % 9;
+        const boxStartRow = Math.floor(row / 3) * 3;
+        const boxStartCol = Math.floor(col / 3) * 3;
+        const selectedVal = gameBoard[index];
+
+        for (let i = 0; i < 81; i++) {
+            if (i === index) continue;
+
+            const r = Math.floor(i / 9);
+            const c = i % 9;
+
+            // Highlight Related (Row, Col, Box)
+            if (r === row || c === col ||
+                (r >= boxStartRow && r < boxStartRow + 3 && c >= boxStartCol && c < boxStartCol + 3)) {
+                cells[i].classList.add('highlighted');
+            }
+
+            // Highlight Same Number
+            if (selectedVal !== 0 && gameBoard[i] === selectedVal) {
+                cells[i].classList.add('same-number');
+            }
+        }
+    }
+
     function selectCell(index) {
         // Deselect prev
         const prev = document.querySelector('.cell.selected');
         if (prev) prev.classList.remove('selected');
 
-        // Highlight logic (optional: highlight same numbers)
-        // clearHighlights();
-
         selectedCellIndex = index;
         const cells = document.querySelectorAll('.cell');
         cells[index].classList.add('selected');
+
+        updateHighlights(index);
     }
 
     function updateCell(index, value) {
@@ -129,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cells = document.querySelectorAll('.cell');
         cells[index].textContent = value === 0 ? '' : value;
         cells[index].classList.remove('error'); // clear error state on edit
+        updateHighlights(index);
     }
 
     function moveSelection(key) {
@@ -176,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cells[i].classList.remove('error');
         }
         stopTimer();
+        updateHighlights(selectedCellIndex);
     }
 
     function gameWon() {
